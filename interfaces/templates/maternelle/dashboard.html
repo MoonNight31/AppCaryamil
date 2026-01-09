@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 Maternelle - AppCaryamil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Neue', cursive;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1 { 
+            color: #ff6b9d;
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        .welcome {
+            font-size: 1.5em;
+            color: #666;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-10px) scale(1.05);
+        }
+        .icon {
+            font-size: 5em;
+            margin-bottom: 15px;
+        }
+        .card h2 {
+            color: #333;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+        .card p {
+            color: #888;
+            font-size: 1.2em;
+        }
+        .children-list {
+            background: white;
+            padding: 25px;
+            border-radius: 25px;
+            margin-top: 30px;
+        }
+        .child-item {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 20px;
+            border-radius: 20px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.3em;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎨 Espace Maternelle</h1>
+        <p class="welcome">Bienvenue {{ user.first_name }} !</p>
+    </div>
+
+    {% if children %}
+    <div class="children-list">
+        <h2 style="font-size: 2em; color: #ff6b9d; margin-bottom: 20px;">👶 Mes Enfants</h2>
+        {% for child in children %}
+        <div class="child-item">
+            <span style="font-size: 2em;">😊</span>
+            <div>
+                <strong>{{ child.first_name }} {{ child.last_name }}</strong>
+                <br>
+                <small style="color: #666;">{{ child.classroom }}</small>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="grid">
+        {% for classroom in classrooms %}
+        <a href="{% url 'maternelle_photos' classroom.id %}" style="text-decoration: none;">
+            <div class="card">
+                <div class="icon">📚</div>
+                <h2>{{ classroom.name }}</h2>
+                <p>{{ classroom.students.count }} élèves</p>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+    <div class="grid">
+        <div class="card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+            <div class="icon">📸</div>
+            <h2>Photos</h2>
+            <p>Voir les photos</p>
+        </div>
+        <div class="card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+            <div class="icon">🎨</div>
+            <h2>Activités</h2>
+            <p>Nos créations</p>
+        </div>
+        <div class="card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
+            <div class="icon">🎵</div>
+            <h2>Chansons</h2>
+            <p>Nos comptines</p>
+        </div>
+    </div>
+</body>
+</html>

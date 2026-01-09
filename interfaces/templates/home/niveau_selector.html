@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choisir un niveau - AppCaryamil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 1000px;
+            width: 100%;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #2563eb;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .welcome {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .levels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .level-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .level-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        }
+        
+        .level-card.maternelle {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        }
+        
+        .level-card.primaire {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+        
+        .level-card.college {
+            background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+        }
+        
+        .level-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+        
+        .level-name {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .level-description {
+            font-size: 1em;
+            opacity: 0.8;
+        }
+        
+        .admin-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #1e40af;
+            transform: translateY(-2px);
+        }
+        
+        .btn-logout {
+            background: #ef4444;
+        }
+        
+        .btn-logout:hover {
+            background: #dc2626;
+        }
+        
+        .info-box {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .info-box h3 {
+            color: #92400e;
+            margin-bottom: 10px;
+        }
+        
+        .info-box p {
+            color: #78350f;
+            line-height: 1.6;
+        }
+        
+        .info-box code {
+            background: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Bienvenue sur AppCaryamil</h1>
+            <p class="welcome">
+                Connecté en tant que <strong>{{ user.get_full_name|default:user.username }}</strong>
+                {% if user.is_teacher %}
+                    <span style="background: #3b82f6; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; margin-left: 10px;">👨‍🏫 Enseignant</span>
+                {% elif user.is_parent %}
+                    <span style="background: #10b981; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; margin-left: 10px;">👨‍👩‍👧 Parent</span>
+                {% elif user.is_superuser %}
+                    <span style="background: #f59e0b; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; margin-left: 10px;">👑 Admin</span>
+                {% endif %}
+            </p>
+        </div>
+
+        {% if user_levels %}
+            <h2 style="color: white; text-align: center; margin-bottom: 25px; font-size: 2em;">
+                {% if user.is_teacher %}
+                    Vos niveaux d'enseignement
+                {% elif user.is_parent %}
+                    Classes de vos enfants
+                {% else %}
+                    Choisissez votre niveau
+                {% endif %}
+            </h2>
+            
+            <div class="levels-grid">
+                {% for level in user_levels %}
+                    {% if level.slug == 'maternelle' %}
+                    <a href="{% url 'maternelle_dashboard' %}" class="level-card maternelle">
+                        <div class="level-icon">🎨</div>
+                        <div class="level-name">Maternelle</div>
+                        <div class="level-description">{{ level.description }}</div>
+                    </a>
+                    {% elif level.slug == 'primaire' %}
+                    <a href="{% url 'primaire_dashboard' %}" class="level-card primaire">
+                        <div class="level-icon">📘</div>
+                        <div class="level-name">Primaire</div>
+                        <div class="level-description">{{ level.description }}</div>
+                    </a>
+                    {% elif level.slug == 'college' %}
+                    <a href="{% url 'college_dashboard' %}" class="level-card college">
+                        <div class="level-icon">📚</div>
+                        <div class="level-name">Collège</div>
+                        <div class="level-description">{{ level.description }}</div>
+                    </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="info-box" style="background: #fee2e2; border-color: #ef4444;">
+                <h3 style="color: #991b1b;">⚠️ Aucun accès disponible</h3>
+                <p style="color: #7f1d1d;">
+                    {% if user.is_teacher %}
+                        Vous n'êtes rattaché à aucune classe pour le moment. Contactez l'administrateur.
+                    {% elif user.is_parent %}
+                        Aucun enfant n'est enregistré sur votre compte. Contactez l'administrateur.
+                    {% else %}
+                        Vous n'avez pas d'accès configuré. Contactez l'administrateur.
+                    {% endif %}
+                </p>
+            </div>
+        {% endif %}
+
+        <div class="admin-section">
+            {% if user.is_superuser %}
+                <a href="/admin/" class="btn">⚙️ Administration</a>
+            {% endif %}
+            {% if user.is_parent %}
+                <a href="{% url 'parent_home' %}" class="btn" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">📸 Mes Photos</a>
+            {% endif %}
+            <a href="{% url 'logout' %}" class="btn btn-logout">🚪 Déconnexion</a>
+        </div>
+    </div>
+</body>
+</html>
