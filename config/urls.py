@@ -20,6 +20,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import redirect
 
+# Personnalisation de l'interface d'administration
+admin.site.site_header = "Administration Caryamil"
+admin.site.site_title = "Caryamil Admin"
+admin.site.index_title = "Panneau de gestion de l'école"
+
 urlpatterns = [
     path('', lambda request: redirect('niveau_selector'), name='home'),
     path('admin/', admin.site.urls),
