@@ -1,19 +1,50 @@
-# 🎓 AppCaryamil - Architecture du Projet
+# 🎓 AppCaryamil - Plateforme de Gestion Scolaire
+
+Application web complète pour la gestion d'établissements scolaires (Maternelle, Primaire, Collège) avec messagerie instantanée, partage de photos, et panel d'administration avancé.
+
+## ✨ Fonctionnalités Principales
+
+### 👥 Gestion des Utilisateurs
+- **Directeurs** : Accès complet au panel d'administration
+- **Enseignants** : Gestion de leurs classes et communications avec parents
+- **Parents** : Suivi de leurs enfants et réception des actualités
+
+### 💬 Messagerie Unifiée
+- Interface type Messenger moderne et responsive
+- Conversations de groupe par classe
+- Discussions privées personnalisées
+- Partage de photos et messages texte
+- Liste des participants avec rôles
+
+### 🖼️ Page d'Accueil Parents
+- Vue centralisée de toutes les photos reçues
+- Statistiques des messages et conversations
+- Filtres par conversation et date
+- Grille interactive avec aperçu des publications
+
+### 🎛️ Panel d'Administration Personnalisé
+- Interface moderne avec sidebar de navigation
+- Gestion complète des niveaux, classes et élèves
+- Création et édition de professeurs et parents
+- Attribution du rôle de directeur
+- Assignment automatique des classes aux enseignants
+- Liaison des enfants aux comptes parents
 
 ## 📁 Structure du Projet
 
 ```
 AppCaryamil/
 │
-├── accounts/              # Gestion des utilisateurs (Parents, Enseignants)
-│   ├── models.py         # CustomUser avec is_parent, is_teacher
+├── accounts/              # Gestion des utilisateurs
+│   ├── models.py         # CustomUser avec is_parent, is_teacher, is_director
 │   ├── views.py          # Login/Logout
 │   ├── urls.py
+│   ├── admin.py          # Configuration admin Django
 │   └── templates/
 │       └── accounts/
 │           └── login.html
 │
-├── school_core/          # ⭐ APP UNIQUE - Logique BDD
+├── school_core/          # ⭐ CŒUR DE L'APPLICATION - Logique BDD
 │   ├── models.py         # TOUS LES MODÈLES :
 │   │                     #   - SchoolLevel (Maternelle, Primaire, Collège)
 │   │                     #   - Classroom (Classes)
@@ -21,36 +52,57 @@ AppCaryamil/
 │   │                     #   - Conversation (Groupes + Discussions privées)
 │   │                     #   - Post (Publications/Photos dans conversations)
 │   │                     #   - Message (Messagerie directe)
-│   ├── admin.py          # Interface d'administration
+│   │                     #   - Grade (Notes - pour Collège)
+│   ├── admin.py          # Configuration admin Django
 │   └── management/
 │       └── commands/
-│           ├── populate_db.py              # Remplir la BDD avec données de test
-│           └── create_group_conversations.py # Créer conversations de groupe
+│           ├── populate_db.py                 # Données de test
+│           ├── create_group_conversations.py  # Conversations de groupe
+│           ├── create_admin.py                # Création administrateur
+│           └── setup_director_permissions.py  # Permissions directeurs
 │
-├── interfaces/           # 🎨 GESTION DES VUES PAR NIVEAU
+├── interfaces/           # 🎨 VUES ET INTERFACES
 │   ├── views_home.py         # Sélection de niveau (avec contrôle d'accès)
 │   ├── views_maternelle.py   # Interface Messenger MATERNELLE
 │   ├── views_primaire.py     # Interface Messenger PRIMAIRE
 │   ├── views_college.py      # Interface Messenger COLLÈGE
-│   ├── views_parents.py      # Page d'accueil pour les parents (toutes leurs photos)
-│   ├── api_views.py          # API pour charger les élèves d'une classe
-│   ├── urls.py               # Routes pour tous les niveaux
+│   ├── views_parents.py      # Page d'accueil parents
+│   ├── views_admin.py        # 🆕 Panel d'administration personnalisé
+│   ├── api_views.py          # API pour chargement dynamique
+│   ├── urls.py               # Routes complètes de l'application
 │   │
-│   └── templates/        # 📱 INTERFACES VISUELLES PAR NIVEAU
+│   └── templates/        # 📱 TEMPLATES PAR SECTION
 │       ├── home/
-│       │   └── niveau_selector.html  # Sélection niveau avec accès filtré
+│       │   └── niveau_selector.html  # Sélection avec bouton admin
 │       │
 │       ├── parents/
-│       │   └── home.html             # Page d'accueil parents avec toutes leurs photos
+│       │   └── home.html             # Vue d'ensemble photos
 │       │
 │       ├── maternelle/
-│       │   └── messenger.html        # Interface Messenger complète
+│       │   ├── dashboard.html        # Tableau de bord
+│       │   └── messenger.html        # Interface Messenger
 │       │
 │       ├── primaire/
-│       │   └── messenger.html        # Interface Messenger complète
+│       │   ├── dashboard.html        # Tableau de bord
+│       │   └── messenger.html        # Interface Messenger
 │       │
-│       └── college/
-│           └── messenger.html        # Interface Messenger complète
+│       ├── college/
+│       │   └── messenger.html        # Interface Messenger
+│       │
+│       └── admin/           # 🆕 PANEL D'ADMINISTRATION
+│           ├── base.html              # Layout avec sidebar
+│           ├── dashboard.html         # Tableau de bord admin
+│           ├── levels_list.html       # Liste des niveaux
+│           ├── level_edit.html        # Édition niveau
+│           ├── classes_list.html      # Liste des classes
+│           ├── class_edit.html        # Édition classe
+│           ├── students_list.html     # Liste des élèves
+│           ├── student_edit.html      # Édition élève
+│           ├── teachers_list.html     # Liste des professeurs
+│           ├── teacher_edit.html      # Création/édition professeur
+│           ├── parents_list.html      # Liste des parents
+│           ├── parent_edit.html       # Création/édition parent
+│           └── user_detail.html       # Détails utilisateur
 │
 └── config/               # Configuration Django
     ├── settings.py

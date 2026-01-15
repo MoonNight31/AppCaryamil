@@ -353,11 +353,15 @@
             <h1>🎓 Bienvenue sur AppCaryamil</h1>
             <p class="welcome">
                 Connecté en tant que <strong>{{ user.get_full_name|default:user.username }}</strong>
-                {% if user.is_teacher %}
+                {% if user.is_director %}
+                    <span style="background: #1a73e8; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; margin-left: 10px;">🎓 Directeur</span>
+                {% elif user.is_teacher %}
                     <span style="background: #3b82f6; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; margin-left: 10px;">👨‍🏫 Enseignant</span>
-                {% elif user.is_parent %}
+                {% endif %}
+                {% if user.is_parent %}
                     <span style="background: #10b981; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; margin-left: 10px;">👨‍👩‍👧 Parent</span>
-                {% elif user.is_superuser %}
+                {% endif %}
+                {% if user.is_superuser and not user.is_director %}
                     <span style="background: #f59e0b; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; margin-left: 10px;">👑 Admin</span>
                 {% endif %}
             </p>
@@ -413,8 +417,14 @@
         {% endif %}
 
         <div class="admin-section">
-            {% if user.is_superuser %}
-                <a href="/admin/" class="btn">⚙️ Administration</a>
+            {% if user.is_staff %}
+                <a href="{% url 'admin_dashboard' %}" class="btn" style="background: linear-gradient(135deg, #1a73e8 0%, #4285f4 100%); box-shadow: 0 6px 20px rgba(26, 115, 232, 0.3);">
+                    {% if user.is_director %}
+                        🎓 Panel Administrateur
+                    {% else %}
+                        ⚙️ Administration
+                    {% endif %}
+                </a>
             {% endif %}
             {% if user.is_parent %}
                 <a href="{% url 'parent_home' %}" class="btn" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">📸 Mes Photos</a>

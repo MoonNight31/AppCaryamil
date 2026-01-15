@@ -22,6 +22,22 @@ class CustomUserAdmin(UserAdmin):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
         return queryset, use_distinct
     
+    def has_module_permission(self, request):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_add_permission(self, request):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_delete_permission(self, request, obj=None):
+        # Seuls les superusers peuvent supprimer des utilisateurs
+        return request.user.is_superuser
+    
     def full_name(self, obj):
         if obj.first_name or obj.last_name:
             return f"{obj.first_name} {obj.last_name}".strip()

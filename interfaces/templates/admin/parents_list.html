@@ -1,0 +1,76 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Parents - Admin{% endblock %}
+
+{% block content %}
+<div class="top-bar">
+    <h1 class="page-title">👨‍👩‍👧 Gestion des parents</h1>
+    <a href="{% url 'admin_parent_create' %}" class="btn btn-primary">➕ Nouveau parent</a>
+</div>
+
+<div class="card">
+    <form method="get" class="search-bar">
+        <input type="text" name="search" placeholder="Rechercher un parent..." value="{{ search }}">
+        <button type="submit" class="btn btn-primary">🔍 Rechercher</button>
+    </form>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Nom d'utilisateur</th>
+                <th>Nom complet</th>
+                <th>Email</th>
+                <th>Enfants</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for parent in parents %}
+            <tr>
+                <td><strong>{{ parent.username }}</strong></td>
+                <td>{{ parent.get_full_name|default:"-" }}</td>
+                <td>{{ parent.email|default:"-" }}</td>
+                <td>
+                    {% with children=parent.children.all %}
+                        {% if children %}
+                            <ul style="margin: 0; padding-left: 20px;">
+                                {% for child in children %}
+                                    <li>{{ child.first_name }} {{ child.last_name }}
+                                        {% if child.classroom %}
+                                            <span class="badge badge-blue">{{ child.classroom.name }}</span>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <span style="color: #94a3b8;">Aucun enfant</span>
+                        {% endif %}
+                    {% endwith %}
+                </td>
+                <td>
+                    {% if parent.is_active %}
+                        <span class="badge badge-green">Actif</span>
+                    {% else %}
+                        <span class="badge badge-red">Inactif</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'admin_parent_edit' parent.id %}" class="btn btn-sm btn-primary">✏️ Modifier</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align: center; color: #64748b;">Aucun parent trouvé</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card" style="margin-top: 20px;">
+    <h3>📊 Statistiques</h3>
+    <p><strong>Total de parents :</strong> {{ parents|length }}</p>
+    <p><strong>Parents avec enfants :</strong> {{ parents|length }}</p>
+</div>
+{% endblock %}

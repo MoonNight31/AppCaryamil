@@ -12,7 +12,10 @@ def niveau_selector(request):
     # Déterminer les niveaux accessibles pour l'utilisateur
     user_levels = []
     
-    if request.user.is_parent:
+    if request.user.is_director or request.user.is_superuser:
+        # Directeurs et super admin: tous les niveaux
+        user_levels = list(levels)
+    elif request.user.is_parent:
         # Parents: afficher les niveaux de leurs enfants
         children = request.user.children.all()
         for child in children:
@@ -24,10 +27,6 @@ def niveau_selector(request):
         for classroom in classrooms:
             if classroom.level not in user_levels:
                 user_levels.append(classroom.level)
-    else:
-        # Super admin: tous les niveaux
-        if request.user.is_superuser:
-            user_levels = list(levels)
     
     context = {
         'levels': levels,

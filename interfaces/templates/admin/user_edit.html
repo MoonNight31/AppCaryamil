@@ -1,0 +1,64 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}{{ edit_user.username }} - Admin{% endblock %}
+
+{% block content %}
+<div class="top-bar">
+    <h1 class="page-title">✏️ Modifier {{ edit_user.username }}</h1>
+    <a href="{% url 'admin_users_list' %}" class="btn btn-secondary">← Retour</a>
+</div>
+
+<div class="card">
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Prénom</label>
+            <input type="text" name="first_name" value="{{ edit_user.first_name }}">
+        </div>
+        
+        <div class="form-group">
+            <label>Nom</label>
+            <input type="text" name="last_name" value="{{ edit_user.last_name }}">
+        </div>
+        
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" value="{{ edit_user.email }}">
+        </div>
+        
+        <div class="form-group">
+            <label>Rôles</label>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="is_director" {% if edit_user.is_director %}checked{% endif %}> 🎓 Directeur</label>
+                <label><input type="checkbox" name="is_teacher" {% if edit_user.is_teacher %}checked{% endif %}> 👨‍🏫 Professeur</label>
+                <label><input type="checkbox" name="is_parent" {% if edit_user.is_parent %}checked{% endif %}> 👨‍👩‍👧 Parent</label>
+                <label><input type="checkbox" name="is_active" {% if edit_user.is_active %}checked{% endif %}> ✅ Actif</label>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-success">💾 Enregistrer</button>
+    </form>
+</div>
+
+{% if classes %}
+<div class="card">
+    <h3>📚 Classes enseignées</h3>
+    <ul>
+        {% for classroom in classes %}
+            <li>{{ classroom.name }} ({{ classroom.level.name }})</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+{% if children %}
+<div class="card">
+    <h3>👨‍👩‍👧 Enfants</h3>
+    <ul>
+        {% for child in children %}
+            <li>{{ child.first_name }} {{ child.last_name }} - {{ child.classroom|default:"Sans classe" }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% endblock %}

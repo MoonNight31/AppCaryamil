@@ -1,0 +1,39 @@
+{% extends 'admin/base.html' %}
+{% block title %}Classes - Admin{% endblock %}
+{% block content %}
+<div class="top-bar">
+    <h1 class="page-title">📚 Gestion des classes</h1>
+    <a href="{% url 'admin_class_create' %}" class="btn btn-primary">➕ Nouvelle classe</a>
+</div>
+<div class="card">
+    <form method="get" class="search-bar">
+        <select name="level">
+            <option value="">Tous les niveaux</option>
+            {% for level in levels %}
+            <option value="{{ level.id }}" {% if level.id|stringformat:"s" == selected_level %}selected{% endif %}>{{ level.name }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="search" placeholder="Rechercher..." value="{{ search }}">
+        <button type="submit" class="btn btn-primary">🔍 Rechercher</button>
+    </form>
+    <table>
+        <thead>
+            <tr><th>Nom</th><th>Niveau</th><th>Professeur</th><th>Année</th><th>Élèves</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+            {% for classroom in classes %}
+            <tr>
+                <td><strong>{{ classroom.name }}</strong></td>
+                <td>{{ classroom.level.name }}</td>
+                <td>{{ classroom.teacher.get_full_name|default:"-" }}</td>
+                <td>{{ classroom.school_year }}</td>
+                <td>{{ classroom.student_count }}</td>
+                <td><a href="{% url 'admin_class_edit' classroom.id %}" class="btn btn-sm btn-primary">✏️</a></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" style="text-align: center; color: #64748b;">Aucune classe</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

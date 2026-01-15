@@ -12,6 +12,21 @@ class SchoolLevelAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
     search_fields = ['name']
     
+    def has_module_permission(self, request):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_add_permission(self, request):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser or request.user.is_director
+    
     def classroom_count(self, obj):
         count = obj.classrooms.count()
         url = reverse('admin:school_core_classroom_changelist') + f'?level__id__exact={obj.id}'
@@ -31,6 +46,21 @@ class ClassroomAdmin(admin.ModelAdmin):
     search_fields = ['name', 'teacher__username', 'teacher__first_name', 'teacher__last_name']
     autocomplete_fields = ['teacher']
     list_editable = ['school_year']
+    
+    def has_module_permission(self, request):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_add_permission(self, request):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser or request.user.is_director
     
     fieldsets = (
         ('Informations de la classe', {
@@ -66,6 +96,21 @@ class StudentAdmin(admin.ModelAdmin):
     filter_horizontal = ['parents']
     autocomplete_fields = ['classroom']
     list_select_related = ['classroom', 'classroom__level']
+    
+    def has_module_permission(self, request):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_add_permission(self, request):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser or request.user.is_director
     
     fieldsets = (
         ('Informations personnelles', {
@@ -125,6 +170,21 @@ class PostAdmin(admin.ModelAdmin):
     list_editable = ['is_published']
     autocomplete_fields = ['author', 'conversation', 'classroom']
     
+    def has_module_permission(self, request):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_add_permission(self, request):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser or request.user.is_director
+    
     fieldsets = (
         ('Contenu', {
             'fields': ('title', 'description', 'image', 'image_preview')
@@ -176,6 +236,22 @@ class MessageAdmin(admin.ModelAdmin):
     autocomplete_fields = ['sender', 'recipient']
     list_editable = ['is_read']
     
+    def has_module_permission(self, request):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_add_permission(self, request):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_delete_permission(self, request, obj=None):
+        # Les directeurs ne peuvent pas supprimer les messages
+        return request.user.is_superuser
+    
     def sender_link(self, obj):
         url = reverse('admin:accounts_customuser_change', args=[obj.sender.id])
         return format_html('<a href="{}">{}</a>', url, obj.sender.get_full_name() or obj.sender.username)
@@ -204,6 +280,21 @@ class ConversationAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at', 'last_message_at', 'participant_list']
     date_hierarchy = 'created_at'
     autocomplete_fields = ['classroom', 'created_by']
+    
+    def has_module_permission(self, request):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_add_permission(self, request):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser or request.user.is_director
+    
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser or request.user.is_director
     
     fieldsets = (
         ('Informations de base', {

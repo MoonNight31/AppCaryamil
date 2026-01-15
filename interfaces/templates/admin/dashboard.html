@@ -1,0 +1,122 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Tableau de bord - Admin{% endblock %}
+
+{% block content %}
+<div class="top-bar">
+    <h1 class="page-title">📊 Tableau de bord</h1>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="icon">👨‍🎓</div>
+        <h3>Élèves</h3>
+        <div class="number">{{ stats.total_students }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="icon">👨‍🏫</div>
+        <h3>Professeurs</h3>
+        <div class="number">{{ stats.total_teachers }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="icon">👨‍👩‍👧</div>
+        <h3>Parents</h3>
+        <div class="number">{{ stats.total_parents }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="icon">📚</div>
+        <h3>Classes</h3>
+        <div class="number">{{ stats.total_classes }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="icon">🏫</div>
+        <h3>Niveaux</h3>
+        <div class="number">{{ stats.total_levels }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="icon">💬</div>
+        <h3>Conversations</h3>
+        <div class="number">{{ stats.total_conversations }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="icon">📝</div>
+        <h3>Publications</h3>
+        <div class="number">{{ stats.total_posts }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="icon">✉️</div>
+        <h3>Messages non lus</h3>
+        <div class="number">{{ stats.unread_messages }}</div>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+    <div class="card">
+        <h3>📝 Publications récentes</h3>
+        {% if recent_posts %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Auteur</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for post in recent_posts %}
+                    <tr>
+                        <td>{{ post.title|default:"Sans titre" }}</td>
+                        <td>{{ post.author.get_full_name|default:post.author.username }}</td>
+                        <td>{{ post.created_at|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="color: #64748b;">Aucune publication récente</p>
+        {% endif %}
+    </div>
+    
+    <div class="card">
+        <h3>👨‍🎓 Élèves récemment ajoutés</h3>
+        {% if recent_students %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Classe</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in recent_students %}
+                    <tr>
+                        <td>{{ student.first_name }} {{ student.last_name }}</td>
+                        <td>{{ student.classroom|default:"Non assigné" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="color: #64748b;">Aucun élève récent</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card" style="margin-top: 20px;">
+    <h3>⚡ Actions rapides</h3>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="{% url 'admin_student_create' %}" class="btn btn-primary">➕ Nouvel élève</a>
+        <a href="{% url 'admin_teacher_create' %}" class="btn btn-primary">➕ Nouveau professeur</a>
+        <a href="{% url 'admin_parent_create' %}" class="btn btn-primary">➕ Nouveau parent</a>
+        <a href="{% url 'admin_class_create' %}" class="btn btn-secondary">➕ Nouvelle classe</a>
+        <a href="{% url 'admin_level_create' %}" class="btn btn-secondary">➕ Nouveau niveau</a>
+    </div>
+</div>
+{% endblock %}

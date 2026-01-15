@@ -27,10 +27,6 @@ class Command(BaseCommand):
             slug='college',
             defaults={'name': 'Collège', 'description': 'De la 6ème à la 3ème'}
         )
-        lycee, _ = SchoolLevel.objects.get_or_create(
-            slug='lycee',
-            defaults={'name': 'Lycée', 'description': 'De la 2nde à la Terminale'}
-        )
         self.stdout.write(self.style.SUCCESS('✅ Niveaux créés'))
 
         # 2. Créer des enseignants
@@ -80,10 +76,6 @@ class Command(BaseCommand):
             (college, '5ème B', teachers[5]),
             (college, '4ème A', teachers[4]),
             (college, '3ème B', teachers[5]),
-            # Lycée
-            (lycee, '2nde A', teachers[5]),
-            (lycee, '1ère S', teachers[4]),
-            (lycee, 'Terminale S', teachers[5]),
         ]
         
         classrooms = []
@@ -157,13 +149,6 @@ class Command(BaseCommand):
             ('Antoine', 'Leroy', classrooms[10], [parents[10], parents[11]]),
             ('Clara', 'Fournier', classrooms[11], [parents[12], parents[13]]),
             ('Mathis', 'Girard', classrooms[11], [parents[14], parents[15]]),
-            # Lycée
-            ('Mathilde', 'Dupont', classrooms[12], [parents[0], parents[1]]),
-            ('Théo', 'Moreau', classrooms[12], [parents[2], parents[3]]),
-            ('Anaïs', 'Laurent', classrooms[13], [parents[4], parents[5]]),
-            ('Clément', 'Simon', classrooms[13], [parents[6], parents[7]]),
-            ('Pauline', 'Michel', classrooms[14], [parents[8], parents[9]]),
-            ('Vincent', 'Leroy', classrooms[14], [parents[10], parents[11]]),
         ]
         
         students = []
@@ -175,8 +160,8 @@ class Command(BaseCommand):
                 birth_year = random.randint(2016, 2020)
             elif classroom.level == college:
                 birth_year = random.randint(2011, 2015)
-            else:  # lycée
-                birth_year = random.randint(2007, 2010)
+            else:
+                birth_year = random.randint(2011, 2015)
             
             birth_date = date(birth_year, random.randint(1, 12), random.randint(1, 28))
             
@@ -217,14 +202,14 @@ class Command(BaseCommand):
             posts.append(post)
         self.stdout.write(self.style.SUCCESS(f'✅ {len(posts)} publications créées'))
 
-        # 7. Créer des notes pour collège et lycée
+        # 7. Créer des notes pour le collège
         self.stdout.write('📝 Création des notes...')
         subjects = ['Mathématiques', 'Français', 'Histoire-Géo', 'Anglais', 'Sciences', 'EPS']
         grades_created = 0
         
-        # Notes pour le collège et lycée
+        # Notes pour le collège
         for student in students:
-            if student.classroom.level in [college, lycee]:
+            if student.classroom.level == college:
                 for subject in subjects:
                     for i in range(random.randint(3, 6)):
                         grade_value = round(random.uniform(8, 19), 2)

@@ -1,0 +1,95 @@
+{% extends 'admin/base.html' %}
+{% block title %}{% if parent %}Modifier{% else %}Créer{% endif %} parent - Admin{% endblock %}
+{% block content %}
+<div class="top-bar">
+    <h1 class="page-title">{% if parent %}✏️ Modifier{% else %}➕ Créer{% endif %} un parent</h1>
+    <a href="{% url 'admin_parents_list' %}" class="btn btn-secondary">← Retour</a>
+</div>
+
+<div class="card">
+    <form method="post">
+        {% csrf_token %}
+        
+        <h3 style="margin-bottom: 20px;">Informations de connexion</h3>
+        
+        <div class="form-group">
+            <label>Nom d'utilisateur *</label>
+            <input type="text" name="username" value="{{ parent.username }}" required {% if parent %}readonly style="background: #f1f5f9;"{% endif %}>
+            {% if not parent %}<small style="color: #64748b;">Ce sera l'identifiant de connexion</small>{% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label>Mot de passe {% if not parent %}*{% else %}(laisser vide pour ne pas changer){% endif %}</label>
+            <input type="password" name="password" {% if not parent %}required{% endif %}>
+            <small style="color: #64748b;">{% if parent %}Ne remplir que si vous voulez changer le mot de passe{% else %}Minimum 8 caractères recommandé{% endif %}</small>
+        </div>
+        
+        <hr style="margin: 30px 0; border-color: #e2e8f0;">
+        
+        <h3 style="margin-bottom: 20px;">Informations personnelles</h3>
+        
+        <div class="form-group">
+            <label>Prénom *</label>
+            <input type="text" name="first_name" value="{{ parent.first_name }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Nom *</label>
+            <input type="text" name="last_name" value="{{ parent.last_name }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" value="{{ parent.email }}">
+        </div>
+        
+        <hr style="margin: 30px 0; border-color: #e2e8f0;">
+        
+        <h3 style="margin-bottom: 20px;">Statut</h3>
+        
+        <div class="checkbox-group">
+            <label>
+                <input type="checkbox" name="is_active" {% if parent %}{% if parent.is_active %}checked{% endif %}{% else %}checked{% endif %}>
+                ✅ Compte actif
+            </label>
+        </div>
+        
+        <hr style="margin: 30px 0; border-color: #e2e8f0;">
+        
+        <h3 style="margin-bottom: 20px;">Enfants</h3>
+        
+        <div class="form-group">
+            <label>Sélectionnez les enfants</label>
+            <div style="max-height: 400px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+                {% for student in students %}
+                    <div style="margin-bottom: 10px;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; border-radius: 6px; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                            <input type="checkbox" name="children" value="{{ student.id }}" 
+                                {% if parent and student in parent.children.all %}checked{% endif %}>
+                            <span>
+                                <strong>{{ student.first_name }} {{ student.last_name }}</strong>
+                                {% if student.classroom %}
+                                    <span class="badge badge-blue" style="margin-left: 8px;">{{ student.classroom.name }}</span>
+                                {% else %}
+                                    <span style="color: #94a3b8; margin-left: 8px;">(sans classe)</span>
+                                {% endif %}
+                            </span>
+                        </label>
+                    </div>
+                {% empty %}
+                    <p style="color: #64748b; text-align: center; padding: 20px;">
+                        Aucun élève disponible. 
+                        <a href="{% url 'admin_student_create' %}" style="color: #2563eb;">Créer un élève</a>
+                    </p>
+                {% endfor %}
+            </div>
+            <small style="color: #64748b;">Les élèves sélectionnés seront liés à ce parent</small>
+        </div>
+        
+        <div style="margin-top: 30px;">
+            <button type="submit" class="btn btn-success">💾 Enregistrer</button>
+            <a href="{% url 'admin_parents_list' %}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

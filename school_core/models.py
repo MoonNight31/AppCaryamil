@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 
-# 1. Le Niveau Scolaire (Maternelle, Primaire, Collège, Lycée)
+# 1. Le Niveau Scolaire (Maternelle, Primaire, Collège)
 class SchoolLevel(models.Model):
     name = models.CharField(max_length=50, unique=True)
     slug = models.SlugField(unique=True)

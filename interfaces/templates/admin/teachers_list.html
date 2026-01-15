@@ -1,0 +1,78 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Professeurs - Admin{% endblock %}
+
+{% block content %}
+<div class="top-bar">
+    <h1 class="page-title">👨‍🏫 Gestion des professeurs</h1>
+    <a href="{% url 'admin_teacher_create' %}" class="btn btn-primary">➕ Nouveau professeur</a>
+</div>
+
+<div class="card">
+    <form method="get" class="search-bar">
+        <input type="text" name="search" placeholder="Rechercher un professeur..." value="{{ search }}">
+        <button type="submit" class="btn btn-primary">🔍 Rechercher</button>
+    </form>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Nom d'utilisateur</th>
+                <th>Nom complet</th>
+                <th>Email</th>
+                <th>Rôle</th>
+                <th>Classes enseignées</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for teacher in teachers %}
+            <tr>
+                <td><strong>{{ teacher.username }}</strong></td>
+                <td>{{ teacher.get_full_name|default:"-" }}</td>
+                <td>{{ teacher.email|default:"-" }}</td>
+                <td>
+                    {% if teacher.is_director %}
+                        <span class="badge badge-blue">🎓 Directeur</span>
+                    {% else %}
+                        <span class="badge badge-green">👨‍🏫 Professeur</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% with classes=teacher.taught_classes.all %}
+                        {% if classes %}
+                            {% for classroom in classes %}
+                                <span class="badge badge-blue">{{ classroom.name }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <span style="color: #94a3b8;">Aucune classe</span>
+                        {% endif %}
+                    {% endwith %}
+                </td>
+                <td>
+                    {% if teacher.is_active %}
+                        <span class="badge badge-green">Actif</span>
+                    {% else %}
+                        <span class="badge badge-red">Inactif</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'admin_teacher_edit' teacher.id %}" class="btn btn-sm btn-primary">✏️ Modifier</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align: center; color: #64748b;">Aucun professeur trouvé</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card" style="margin-top: 20px;">
+    <h3>📊 Statistiques</h3>
+    <p><strong>Total de professeurs :</strong> {{ teachers|length }}</p>
+    <p><strong>Directeurs :</strong> {{ teachers|length|add:"-1" }}</p>
+</div>
+{% endblock %}

@@ -48,7 +48,10 @@ def primaire_dashboard(request):
             django_messages.success(request, '✉️ Message envoyé avec succès !')
             return redirect(f'/niveaux/primaire/?conv={selected_conversation.id}')
     
-    if request.user.is_teacher:
+    if request.user.is_director:
+        # Directeurs: toutes les classes du niveau
+        classrooms = Classroom.objects.filter(level=level)
+    elif request.user.is_teacher:
         classrooms = request.user.taught_classes.filter(level=level)
     elif request.user.is_parent:
         children = request.user.children.filter(classroom__level=level)
@@ -63,16 +66,16 @@ def primaire_dashboard(request):
         'posts': posts,
         'can_post': True,
         'classrooms': classrooms,
-        'can_create_conversation': request.user.is_teacher,
+        'can_create_conversation': request.user.is_teacher or request.user.is_director,
     }
     return render(request, 'primaire/messenger.html', context)
 
 
 @login_required
 def create_conversation(request):
-    """Créer une nouvelle conversation privée (enseignants uniquement)"""
-    if not request.user.is_teacher:
-        django_messages.error(request, "Seuls les enseignants peuvent créer des conversations")
+    """Créer une nouvelle conversation privée (enseignants et directeurs uniquement)"""
+    if not (request.user.is_teacher or request.user.is_director):
+        django_messages.error(request, "Seuls les enseignants et directeurs peuvent créer des conversations")
         return redirect('/niveaux/primaire/')
     
     if request.method == 'POST':

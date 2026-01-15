@@ -1,0 +1,27 @@
+{% extends 'admin/base.html' %}
+{% block title %}Niveaux - Admin{% endblock %}
+{% block content %}
+<div class="top-bar">
+    <h1 class="page-title">🏫 Gestion des niveaux</h1>
+    <a href="{% url 'admin_level_create' %}" class="btn btn-primary">➕ Nouveau niveau</a>
+</div>
+<div class="card">
+    <table>
+        <thead>
+            <tr><th>Nom</th><th>Slug</th><th>Classes</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+            {% for level in levels %}
+            <tr>
+                <td><strong>{{ level.name }}</strong></td>
+                <td><code>{{ level.slug }}</code></td>
+                <td>{{ level.class_count }}</td>
+                <td><a href="{% url 'admin_level_edit' level.id %}" class="btn btn-sm btn-primary">✏️</a></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" style="text-align: center; color: #64748b;">Aucun niveau</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
