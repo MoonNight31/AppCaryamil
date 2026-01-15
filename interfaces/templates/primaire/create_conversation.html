@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer une Discussion - Maternelle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .form-content {
+            padding: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e4e6eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .students-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .student-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #e4e6eb;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .student-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+        }
+
+        .student-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .student-info {
+            flex: 1;
+        }
+
+        .student-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .student-class {
+            font-size: 12px;
+            color: #65676b;
+            display: inline-block;
+            padding: 2px 8px;
+            background: #e7f3ff;
+            border-radius: 12px;
+        }
+
+        .student-parents {
+            font-size: 11px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .class-section {
+            margin-bottom: 24px;
+        }
+
+        .class-header {
+            font-size: 16px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 12px;
+            padding: 8px 12px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 8px;
+        }
+
+        .selection-info {
+            background: #e7f3ff;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: #1c7ed6;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #f0f2f5;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e4e6eb;
+        }
+
+        .messages {
+            margin: 16px 0;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .alert-success {
+            background: #d3f9d8;
+            color: #2b8a3e;
+            border-left: 4px solid #2b8a3e;
+        }
+
+        .alert-error {
+            background: #ffe0e0;
+            color: #c92a2a;
+            border-left: 4px solid #c92a2a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💬 Créer une Discussion Privée</h1>
+            <p>Sélectionnez les élèves (leurs parents seront automatiquement ajoutés)</p>
+        </div>
+
+        <div class="form-content">
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="POST" id="createConversationForm">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="name">📝 Nom de la conversation</label>
+                    <input type="text" id="name" name="name" placeholder="Ex: Discussion PS-A Parents" required>
+                </div>
+
+                <div class="form-group">
+                    <label>👶 Sélectionner les élèves</label>
+                    <div class="selection-info">
+                        <span>📊</span>
+                        <span id="selectionCount">Aucun élève sélectionné</span>
+                    </div>
+
+                    {% regroup students by classroom as classroom_list %}
+                    <div class="students-grid">
+                        {% for classroom_group in classroom_list %}
+                            <div class="class-section">
+                                <div class="class-header">
+                                    🏫 {{ classroom_group.grouper.name }}
+                                </div>
+                                {% for student in classroom_group.list %}
+                                    <div class="student-item" onclick="toggleCheckbox(this)">
+                                        <input type="checkbox" name="students" value="{{ student.id }}" onchange="updateSelectionCount()">
+                                        <div class="student-info">
+                                            <div class="student-name">{{ student.first_name }} {{ student.last_name }}</div>
+                                            <div class="student-class">{{ student.classroom.name }}</div>
+                                            <div class="student-parents">
+                                                👨‍👩‍👧 {{ student.parents.count }} parent(s)
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <a href="/niveaux/maternelle/" class="btn btn-secondary">❌ Annuler</a>
+                    <button type="submit" class="btn btn-primary" id="submitBtn" disabled>✅ Créer la Discussion</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleCheckbox(element) {
+            const checkbox = element.querySelector('input[type="checkbox"]');
+            if (event.target !== checkbox) {
+                checkbox.checked = !checkbox.checked;
+                updateSelectionCount();
+            }
+        }
+
+        function updateSelectionCount() {
+            const checkboxes = document.querySelectorAll('input[name="students"]:checked');
+            const count = checkboxes.length;
+            const submitBtn = document.getElementById('submitBtn');
+            const selectionCount = document.getElementById('selectionCount');
+            
+            if (count === 0) {
+                selectionCount.textContent = 'Aucun élève sélectionné';
+                submitBtn.disabled = true;
+            } else {
+                selectionCount.textContent = `${count} élève(s) sélectionné(s)`;
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Initialize
+        updateSelectionCount();
+    </script>
+</body>
+</html>

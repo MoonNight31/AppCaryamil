@@ -14,15 +14,24 @@ def college_dashboard(request):
     """Interface Messenger - Conversations de groupe et privées"""
     level = get_object_or_404(SchoolLevel, slug='college')
     
-    conversations = Conversation.objects.filter(
-        Q(participants=request.user) | Q(created_by=request.user)
-    ).filter(
-        Q(classroom__level=level) | Q(classroom__isnull=True, participants__children__classroom__level=level)
-    ).distinct().order_by('-last_message_at')[:50]
+    # Les directeurs voient toutes les conversations du niveau
+    if request.user.is_director:
+        conversations = Conversation.objects.filter(
+            Q(classroom__level=level) | Q(classroom__isnull=True, participants__children__classroom__level=level)
+        ).distinct().order_by('-last_message_at')[:50]
+    else:
+        conversations = Conversation.objects.filter(
+            Q(participants=request.user) | Q(created_by=request.user)
+        ).filter(
+            Q(classroom__level=level) | Q(classroom__isnull=True, participants__children__classroom__level=level)
+        ).distinct().order_by('-last_message_at')[:50]
     
     conversation_id = request.GET.get('conv')
     if conversation_id:
-        selected_conversation = get_object_or_404(Conversation, id=conversation_id, participants=request.user)
+        if request.user.is_director:
+            selected_conversation = get_object_or_404(Conversation, id=conversation_id)
+        else:
+            selected_conversation = get_object_or_404(Conversation, id=conversation_id, participants=request.user)
     else:
         selected_conversation = conversations.first() if conversations.exists() else None
     
@@ -78,22 +87,21 @@ def create_conversation(request):
         django_messages.error(request, "Seuls les enseignants et directeurs peuvent créer des conversations")
         return redirect('/niveaux/college/')
     
+    level = get_object_or_404(SchoolLevel, slug='college')
+    
     if request.method == 'POST':
-        classroom_id = request.POST.get('classroom')
         student_ids = request.POST.getlist('students')
         conversation_name = request.POST.get('name')
         
-        if not (classroom_id and student_ids):
-            django_messages.error(request, "Veuillez sélectionner une classe et au moins un élève")
-            return redirect('/niveaux/college/')
+        if not student_ids:
+            django_messages.error(request, "Veuillez sélectionner au moins un élève")
+            return redirect('/niveaux/college/create-conversation/')
         
-        classroom = get_object_or_404(Classroom, id=classroom_id)
-        
-        # Créer la conversation
+        # Créer la conversation sans classe spécifique (multi-classes)
         conversation = Conversation.objects.create(
-            name=conversation_name or f"Discussion {classroom.name}",
+            name=conversation_name or f"Discussion Collège",
             conversation_type='private',
-            classroom=classroom,
+            classroom=None,
             created_by=request.user
         )
         
@@ -107,10 +115,74 @@ def create_conversation(request):
             for parent in student.parents.all():
                 conversation.participants.add(parent)
         
-        django_messages.success(request, f"💬 Conversation créée avec succès !")
+        django_messages.success(request, f"💬 Conversation créée avec {len(student_ids)} élève(s) !")
         return redirect(f'/niveaux/college/?conv={conversation.id}')
     
-    return redirect('/niveaux/college/')
+    # GET: afficher le formulaire avec tous les élèves du niveau
+    if request.user.is_director:
+        classrooms = Classroom.objects.filter(level=level)
+    else:
+        classrooms = request.user.taught_classes.filter(level=level)
+    
+    students = Student.objects.filter(classroom__in=classrooms).select_related('classroom').order_by('classroom__name', 'last_name', 'first_name')
+    
+    context = {
+        'level': level,
+        'classrooms': classrooms,
+        'students': students,
+    }
+    return render(request, 'college/create_conversation.html', context)
+
+
+@login_required
+def add_participants(request, conversation_id):
+    """Ajouter des participants à une conversation existante"""
+    conversation = get_object_or_404(Conversation, id=conversation_id)
+    
+    if not (request.user.is_director or conversation.created_by == request.user or request.user in conversation.participants.all()):
+        django_messages.error(request, "Vous n'avez pas la permission de modifier cette conversation")
+        return redirect(f'/niveaux/college/?conv={conversation.id}')
+    
+    level = get_object_or_404(SchoolLevel, slug='college')
+    
+    if request.method == 'POST':
+        student_ids = request.POST.getlist('students')
+        
+        if not student_ids:
+            django_messages.error(request, "Veuillez sélectionner au moins un élève")
+            return redirect(f'/niveaux/college/conversation/{conversation_id}/add-participants/')
+        
+        added_count = 0
+        for student_id in student_ids:
+            student = Student.objects.get(id=student_id)
+            for parent in student.parents.all():
+                if parent not in conversation.participants.all():
+                    conversation.participants.add(parent)
+                    added_count += 1
+        
+        if added_count > 0:
+            django_messages.success(request, f"✅ {added_count} participant(s) ajouté(s) à la conversation")
+        else:
+            django_messages.info(request, "Tous ces participants sont déjà dans la conversation")
+        
+        return redirect(f'/niveaux/college/?conv={conversation.id}')
+    
+    if request.user.is_director:
+        classrooms = Classroom.objects.filter(level=level)
+    else:
+        classrooms = request.user.taught_classes.filter(level=level)
+    
+    current_participants = conversation.participants.all()
+    students = Student.objects.filter(classroom__in=classrooms).select_related('classroom').order_by('classroom__name', 'last_name', 'first_name')
+    
+    context = {
+        'level': level,
+        'conversation': conversation,
+        'classrooms': classrooms,
+        'students': students,
+        'current_participants': current_participants,
+    }
+    return render(request, 'college/add_participants.html', context)
 
 
 @login_required

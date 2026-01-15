@@ -35,18 +35,21 @@ urlpatterns = [
     # MATERNELLE - Interface Messenger
     path('maternelle/', views_maternelle.maternelle_dashboard, name='maternelle_dashboard'),
     path('maternelle/create-conversation/', views_maternelle.create_conversation, name='create_conversation'),
+    path('maternelle/conversation/<int:conversation_id>/add-participants/', views_maternelle.add_participants, name='maternelle_add_participants'),
     path('maternelle/photos/<int:classroom_id>/', views_maternelle.maternelle_photos, name='maternelle_photos'),
     path('maternelle/eleves/<int:classroom_id>/', views_maternelle.maternelle_eleves, name='maternelle_eleves'),
     
     # PRIMAIRE - Interface structurée
     path('primaire/', views_primaire.primaire_dashboard, name='primaire_dashboard'),
     path('primaire/create-conversation/', views_primaire.create_conversation, name='primaire_create_conversation'),
+    path('primaire/conversation/<int:conversation_id>/add-participants/', views_primaire.add_participants, name='primaire_add_participants'),
     path('primaire/devoirs/<int:classroom_id>/', views_primaire.primaire_devoirs, name='primaire_devoirs'),
     path('primaire/eleve/<int:student_id>/', views_primaire.primaire_eleve, name='primaire_eleve'),
     
     # COLLÈGE - Interface académique
     path('college/', views_college.college_dashboard, name='college_dashboard'),
     path('college/create-conversation/', views_college.create_conversation, name='college_create_conversation'),
+    path('college/conversation/<int:conversation_id>/add-participants/', views_college.add_participants, name='college_add_participants'),
     path('college/notes/<int:student_id>/', views_college.college_notes, name='college_notes'),
     path('college/messages/', views_college.college_messages, name='college_messages'),
 ]
