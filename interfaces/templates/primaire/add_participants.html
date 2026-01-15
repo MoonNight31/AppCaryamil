@@ -319,7 +319,7 @@
                                                 {% with student_has_parent_in=True %}{% endwith %}
                                             {% endif %}
                                         {% endfor %}
-                                        <div class="student-item {% if student_has_parent_in %}already-in{% endif %}" onclick="{% if not student_has_parent_in %}toggleCheckbox(this){% endif %}">
+                                        <div class="student-item {% if student_has_parent_in %}already-in{% endif %}" {% if not student_has_parent_in %}onclick="toggleCheckbox(this)"{% endif %}>
                                             <input type="checkbox" name="students" value="{{ student.id }}" 
                                                    {% if student_has_parent_in %}disabled{% endif %}
                                                    onchange="updateSelectionCount()">

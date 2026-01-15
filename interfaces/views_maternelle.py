@@ -117,7 +117,6 @@ def create_conversation(request):
         conversation.participants.add(request.user)
         
         # Ajouter les parents des élèves sélectionnés
-        from school_core.models import Student
         for student_id in student_ids:
             student = Student.objects.get(id=student_id)
             for parent in student.parents.all():

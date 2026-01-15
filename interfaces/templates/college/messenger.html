@@ -292,6 +292,25 @@
             background: #505152;
         }
 
+        .add-participants-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .add-participants-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
         /* MESSAGES AREA (Timeline des photos) */
         .messages-container {
             flex: 1;
@@ -649,7 +668,7 @@
                     <p>{{ user.first_name }} {{ user.last_name }}</p>
                 </div>
                 {% if can_create_conversation %}
-                <button class="new-conversation-btn" onclick="openCreateModal()">+</button>
+                <a href="/niveaux/college/create-conversation/" class="new-conversation-btn" style="text-decoration: none; display: inline-block;">+</a>
                 {% endif %}
             </div>
             <div class="conversation-list">
@@ -697,6 +716,11 @@
                     </div>
                 </div>
                 <div class="header-actions">
+                    {% if can_create_conversation and selected_conversation.conversation_type == 'private' %}
+                    <a href="/niveaux/college/conversation/{{ selected_conversation.id }}/add-participants/" class="add-participants-btn">
+                        ➕ Ajouter des participants
+                    </a>
+                    {% endif %}
                     <a href="/niveaux/" class="back-btn">← Niveaux</a>
                     <a href="{% url 'logout' %}" class="logout-btn">Déconnexion</a>
                 </div>
