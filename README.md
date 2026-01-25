@@ -2,6 +2,44 @@
 
 Application web complète pour la gestion d'établissements scolaires (Maternelle, Primaire, Collège) avec messagerie instantanée, partage de photos, et panel d'administration avancé.
 
+---
+
+## 📚 Documentation Complète
+
+Cette application dispose d'une documentation exhaustive :
+
+### 📖 Documents Disponibles
+
+1. **[DOCUMENTATION_BDD.md](DOCUMENTATION_BDD.md)** - Documentation complète de la base de données
+   - Architecture des modèles
+   - Relations détaillées
+   - Diagrammes ERD
+   - Contraintes et validations
+   - Commandes de gestion
+
+2. **[CAS_UTILISATION.md](CAS_UTILISATION.md)** - Cas d'utilisation détaillés
+   - Cas d'utilisation par acteur (Directeur, Professeur, Parent)
+   - Diagrammes de cas d'utilisation
+   - Matrice des permissions
+   - Scénarios de vie réels
+   - Règles métier
+
+3. **[DIAGRAMMES_UML.md](DIAGRAMMES_UML.md)** - Diagrammes UML complets
+   - Diagramme de classes
+   - Diagrammes de séquence
+   - Diagrammes d'activité
+   - Diagrammes d'état
+   - Diagrammes de déploiement
+
+4. **[GUIDE_REFERENCE.md](GUIDE_REFERENCE.md)** - Guide de référence rapide
+   - Résumé du système
+   - API Endpoints
+   - Commandes management
+   - Requêtes SQL fréquentes
+   - Dépannage
+
+---
+
 ## ✨ Fonctionnalités Principales
 
 ### 👥 Gestion des Utilisateurs
@@ -30,10 +68,17 @@ Application web complète pour la gestion d'établissements scolaires (Maternell
 - Assignment automatique des classes aux enseignants
 - Liaison des enfants aux comptes parents
 
+---
+
 ## 📁 Structure du Projet
 
 ```
 AppCaryamil/
+│
+├── 📄 DOCUMENTATION_BDD.md      # Documentation base de données
+├── 📄 CAS_UTILISATION.md        # Cas d'utilisation
+├── 📄 DIAGRAMMES_UML.md         # Diagrammes UML
+├── 📄 GUIDE_REFERENCE.md        # Guide de référence
 │
 ├── accounts/              # Gestion des utilisateurs
 │   ├── models.py         # CustomUser avec is_parent, is_teacher, is_director
@@ -359,82 +404,6 @@ Système de permissions à plusieurs niveaux :
 - Code documenté et structuré
 - Templates réutilisables
 
-## 🛠️ Installation et Configuration
-
-### Prérequis
-- Python 3.10+
-- Django 6.0.1
-- SQLite (base de données par défaut)
-
-### Installation
-
-```bash
-# Cloner le projet
-git clone <url-du-repo>
-cd AppCaryamil
-
-# Créer un environnement virtuel
-python -m venv .venv
-
-# Activer l'environnement (Windows)
-.venv\Scripts\activate
-
-# Activer l'environnement (Linux/Mac)
-source .venv/bin/activate
-
-# Installer les dépendances
-pip install -r requirements.txt
-
-# Appliquer les migrations
-python manage.py migrate
-
-# Créer un superutilisateur (directeur)
-python manage.py createsuperuser
-
-# Remplir la base avec des données de test (optionnel)
-python manage.py populate_db
-
-# Créer les conversations de groupe automatiquement
-python manage.py create_group_conversations
-
-# Lancer le serveur de développement
-python manage.py runserver
-```
-
-### Commandes de Gestion
-
-```bash
-# Créer des migrations après modification des modèles
-python manage.py makemigrations
-
-# Appliquer les migrations
-python manage.py migrate
-
-# Créer un administrateur/directeur
-python manage.py createsuperuser
-
-# Remplir la BDD avec des données de démonstration
-python manage.py populate_db
-
-# Créer les conversations de groupe pour toutes les classes
-python manage.py create_group_conversations
-
-# Configurer les permissions pour les directeurs
-python manage.py setup_director_permissions
-
-# Créer un compte admin rapidement (script personnalisé)
-python manage.py create_admin
-
-# Lancer le serveur de développement
-python manage.py runserver
-
-# Accéder au shell Django
-python manage.py shell
-
-# Collecter les fichiers statiques (production)
-python manage.py collectstatic
-```
-
 ### Configuration Initiale
 
 1. **Créer un directeur** : Première connexion avec le superutilisateur créé
@@ -739,148 +708,3 @@ Après avoir exécuté `python manage.py populate_db`, les comptes suivants sont
 - **Username**: admin
 - **Password**: (défini lors de createsuperuser)
 - **Accès**: Interface Django admin (`/admin/`) et panel personnalisé
-
-## 🔐 Sécurité et Permissions
-
-### Authentification
-- **Login requis** : Toutes les vues sont protégées par `@login_required`
-- **Sessions Django** : Gestion sécurisée des sessions utilisateurs
-- **CSRF Protection** : Tokens CSRF sur tous les formulaires
-- **Passwords hachés** : Utilisation de `set_password()` pour le hachage
-
-### Permissions par Rôle
-
-#### 👑 Directeurs
-- Accès complet au panel d'administration (`user_is_admin()`)
-- Visibilité de tous les niveaux dans le sélecteur
-- CRUD complet sur tous les modèles
-- Création de comptes professeurs avec option "Directeur"
-- Création de comptes parents avec liaison aux enfants
-- Assignment des classes aux enseignants
-- Permissions Django admin automatiques (is_staff=True)
-
-#### 👨‍🏫 Enseignants
-- Accès uniquement aux niveaux où ils enseignent
-- Dashboards de leurs classes
-- Création de discussions privées (sélection d'élèves)
-- Partage de photos et messages dans leurs conversations
-- Vue de la liste des participants
-- Pas d'accès au panel d'administration (sauf si directeur)
-
-#### 👨‍👩‍👧 Parents
-- Accès uniquement aux niveaux de leurs enfants
-- Page "Mes Photos" personnalisée avec leurs publications
-- Participation aux conversations les concernant
-- Partage dans leurs conversations
-- Vue de la liste des participants
-- Aucun accès administratif
-
-### Filtrage Automatique
-
-**Conversations**
-- Filtrées par `request.user` dans `participants`
-- Seules les conversations pertinentes sont affichées
-- Redirection si accès non autorisé
-
-**Classes**
-- Enseignants : uniquement leurs classes assignées
-- Directeurs : toutes les classes
-- Parents : classes de leurs enfants uniquement
-
-**Niveaux**
-- Enseignants : niveaux où ils enseignent
-- Directeurs : tous les niveaux
-- Parents : niveaux de leurs enfants
-
-**Panel d'Administration**
-- Contrôle via `user_is_admin()` helper
-- Redirection automatique vers `/niveaux/` si non autorisé
-- Vérification sur toutes les vues admin
-
-### Validation des Données
-
-**Formulaires**
-- Validation côté serveur (Django forms)
-- Validation côté client (HTML5 required, patterns)
-- Messages d'erreur explicites
-- Prévention des doublons (contraintes BDD)
-
-**Upload de Fichiers**
-- Validation du type MIME
-- Limite de taille (configurée dans settings)
-- Stockage sécurisé dans MEDIA_ROOT
-- Nommage unique des fichiers
-
-### Bonnes Pratiques
-
-- **Séparation des rôles** : Un utilisateur = un rôle principal (avec exceptions pour directeurs)
-- **Principe du moindre privilège** : Accès minimal nécessaire
-- **Traçabilité** : Tous les posts/messages ont un auteur
-- **Intégrité des données** : Contraintes de clés étrangères
-- **Messages utilisateur** : Retours clairs sur les actions (succès/erreur)
-
-## 🆕 Fonctionnalités Principales
-
-### 🎛️ Panel d'Administration Personnalisé
-Interface moderne remplaçant le Django admin :
-- **Design moderne** : Sidebar avec dégradés, icônes intuitives
-- **Dashboard** : Vue d'ensemble avec statistiques clés
-- **Gestion complète** : Niveaux, Classes, Élèves, Professeurs, Parents
-- **Création de comptes** : Formulaires optimisés pour professeurs et parents
-- **Assignment rapide** : Classes aux enseignants, enfants aux parents
-- **Rôle directeur** : Case à cocher pour donner accès admin
-- **Responsive** : Adapté mobile, tablette, desktop
-- **Navigation intuitive** : Sidebar permanente avec icônes
-
-### 💬 Système de Messagerie Moderne
-Interface type Facebook Messenger :
-- **Deux types de conversations** : Groupe (classe entière) et Privée (sélection d'élèves)
-- **Messages flexibles** : Photo seule, texte seul, ou les deux
-- **Upload avec preview** : Aperçu instantané avant envoi
-- **Timeline chronologique** : Messages triés du plus récent au plus ancien
-- **Photos cliquables** : Modal plein écran pour agrandissement
-- **Liste des participants** : Déroulant avec rôles (enseignant/parent)
-- **Badges intuitifs** : Icônes pour différencier groupe/privé
-- **Auto-scroll** : Défilement automatique vers nouveaux messages
-
-### 🖼️ Page d'Accueil Parents
-Vue centralisée de toutes les publications :
-- **Statistiques personnalisées** : Messages, conversations, enfants
-- **Grille interactive** : Toutes les photos reçues dans toutes conversations
-- **Cartes détaillées** : Auteur, date, conversation, photo, message
-- **Modal d'aperçu** : Agrandissement des photos en un clic
-- **Informations enfants** : Liste avec classe et niveau
-- **Design moderne** : Layout responsive avec badges colorés
-
-### 👥 Gestion des Rôles
-Système flexible à trois niveaux :
-- **Directeurs** : Accès total administration, toutes classes/niveaux
-- **Enseignants** : Gestion de leurs classes, création discussions privées
-- **Parents** : Suivi de leurs enfants, réception actualités
-- **Assignment automatique** : is_staff auto pour directeurs
-- **Badges visuels** : Identification rapide du rôle dans l'interface
-
-### 🔒 Contrôle d'Accès Granulaire
-Filtrage automatique selon le rôle :
-- **Niveaux visibles** : Selon classes enseignées ou enfants inscrits
-- **Conversations filtrées** : Uniquement celles où l'utilisateur participe
-- **Panel admin** : Réservé aux directeurs uniquement
-- **Redirections intelligentes** : Selon permissions de l'utilisateur
-- **Messages contextuels** : Explications claires des restrictions
-
-### 📱 Interface Responsive
-Design adaptatif pour tous les écrans :
-- **Mobile-first** : Optimisé pour smartphones
-- **Tablette** : Layout ajusté pour tablettes
-- **Desktop** : Interface complète avec sidebar
-- **Sidebar escamotable** : Navigation adaptée selon la taille d'écran
-- **Grilles flexibles** : Photos et cartes s'adaptent automatiquement
-
-### 🎨 Design Moderne
-Interface visuelle attractive :
-- **Dégradés colorés** : Différenciation visuelle des sections
-- **Icônes intuitives** : Émojis et icônes FontAwesome
-- **Badges colorés** : Identification rapide des rôles et types
-- **Animations** : Transitions fluides et effets hover
-- **Typographie** : Police Inter pour lisibilité optimale
-- **Couleurs cohérentes** : Palette harmonieuse à travers l'app
